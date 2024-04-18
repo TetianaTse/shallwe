@@ -1,10 +1,20 @@
 import React, { useState, useRef, useEffect } from 'react';
-import ReactCrop, { centerCrop, makeAspectCrop, Crop, PixelCrop, convertToPixelCrop } from 'react-image-crop';
+import ReactCrop, {
+  centerCrop,
+  makeAspectCrop,
+  Crop,
+  PixelCrop,
+  convertToPixelCrop,
+} from 'react-image-crop';
 import { useDebounceEffect } from './useDebounceEffect';
 import 'react-image-crop/dist/ReactCrop.css';
-import './ImageCrop.css';
+import './ImageCrop.css'
 
-function centerAspectCrop(mediaWidth: number, mediaHeight: number, aspect: number) {
+function centerAspectCrop(
+  mediaWidth: number,
+  mediaHeight: number,
+  aspect: number,
+) {
   return centerCrop(
     makeAspectCrop(
       {
@@ -26,9 +36,10 @@ export default function ImageCrop() {
   const imgRef = useRef<HTMLImageElement>(null);
   const [crop, setCrop] = useState<Crop>();
   const [completedCrop, setCompletedCrop] = useState<PixelCrop>();
+  const [scale, setScale] = useState(1);
+  const [rotate, setRotate] = useState(0);
   const [aspect, setAspect] = useState<number | undefined>(undefined);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [scaleValue, setScaleValue] = useState(1);
 
   useEffect(() => {
     if (imgRef.current && aspect) {
@@ -38,6 +49,11 @@ export default function ImageCrop() {
       setCompletedCrop(convertToPixelCrop(newCrop, width, height));
     }
   }, [imgRef.current, aspect]);
+  useEffect(() => {
+  if (imgRef.current) {
+    imgRef.current.style.transform = `scale(${scale}) rotate(${rotate}deg)`;
+  }
+}, [scale, rotate]);
 
   function onSelectFile(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files && e.target.files.length > 0) {
@@ -60,80 +76,113 @@ export default function ImageCrop() {
         completedCrop?.height &&
         imgRef.current
       ) {
-        // 
+        // Do something with completed crop
       }
     },
     100,
-    [completedCrop],
+    [completedCrop, scale, rotate],
   );
 
   async function onDownloadClick() {
-    const canvas = document.createElement('canvas');
-    const img = imgRef.current;
-    if (!img) return;
+  const canvas = document.createElement('canvas');
+  const img = imgRef.current;
+  if (!img) return;
 
-    let finalCrop: PixelCrop;
+  const scaleX = img.naturalWidth / img.width;
+  const scaleY = img.naturalHeight / img.height;
 
-    if (completedCrop) {
-      finalCrop = {
-        ...completedCrop,
-        unit: 'px',
-      };
-    } else {
-      finalCrop = {
-        unit: 'px',
-        x: 0,
-        y: 0,
-        width: img.naturalWidth,
-        height: img.naturalHeight,
-      };
-    }
+  let finalCrop: PixelCrop;
 
-    canvas.width = finalCrop.width;
-    canvas.height = finalCrop.height;
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    ctx.drawImage(
-      img,
-      finalCrop.x,
-      finalCrop.y,
-      finalCrop.width,
-      finalCrop.height,
-      0,
-      0,
-      finalCrop.width,
-      finalCrop.height,
-    );
-
-    const downloadUrl = canvas.toDataURL('image/jpeg');
-    const a = document.createElement('a');
-    a.href = downloadUrl;
-    a.download = 'cropped-image.jpeg';
-    a.click();
+  if (completedCrop) {
+    finalCrop = {
+      ...completedCrop,
+      unit: 'px',
+      x: completedCrop.x * scaleX,
+      y: completedCrop.y * scaleY,
+      width: completedCrop.width * scaleX,
+      height: completedCrop.height * scaleY,
+    };
+  } else {
+    finalCrop = {
+      unit: 'px',
+      x: 0,
+      y: 0,
+      width: img.naturalWidth,
+      height: img.naturalHeight,
+    };
   }
 
-return (
+  canvas.width = finalCrop.width;
+  canvas.height = finalCrop.height;
+
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+
+  ctx.drawImage(
+    img,
+    finalCrop.x,
+    finalCrop.y,
+    finalCrop.width,
+    finalCrop.height,
+    0,
+    0,
+    finalCrop.width,
+    finalCrop.height,
+  );
+
+  const downloadUrl = canvas.toDataURL('image/jpeg');
+  const a = document.createElement('a');
+  a.href = downloadUrl;
+  a.download = 'cropped-image.jpeg';
+  a.click();
+}
+
+  return (
     <div className="App_crop">
       <div className="Crop-Controls">
         <input
           type="file"
-          accept="image/jpeg, image/png, image/heic, image/heif"
+          accept="image/*"
           onChange={onSelectFile}
           ref={fileInputRef}
           style={{ display: 'none' }}
         />
         {!fileSelected && (
-          <div className="image_crop">
+          <div className='image_crop'>
             <img
               src="images/images.png"
-              alt="Выбрать файл"
+              alt="Обрати файл"
               onClick={() => fileInputRef.current?.click()}
-              style={{ maxWidth: '100%', maxHeight: '100%', cursor: 'pointer' }}
-            />
+              />
           </div>
         )}
+        {/* {!!fileSelected && (
+          <>
+            <div>
+              <label htmlFor="scale-input">Scale: </label>
+              <input
+                id="scale-input"
+                type="number"
+                step="0.1"
+                value={scale}
+                disabled={!imgSrc}
+                onChange={(e) => setScale(Number(e.target.value))}
+              />
+            </div>
+            <div>
+              <label htmlFor="rotate-input">Rotate: </label>
+              <input
+                id="rotate-input"
+                type="number"
+                value={rotate}
+                disabled={!imgSrc}
+                onChange={(e) =>
+                  setRotate(Math.min(180, Math.max(-180, Number(e.target.value))))
+                }
+              />
+            </div>
+          </>
+        )} */}
       </div>
       {!!imgSrc && (
         <ReactCrop
@@ -147,17 +196,8 @@ return (
             alt="Crop me"
             src={imgSrc}
             onLoad={onImageLoad}
-            style={{ transform: `scale(${scaleValue})` }}
           />
         </ReactCrop>
-    )}
-      {fileSelected && (
-            <>
-              <div className='scale_block'>
-                <button className="scale_button" onClick={() => setScaleValue(scaleValue - 0.1)}>- </button>
-                <button className="scale_button" onClick={() => setScaleValue(scaleValue + 0.1)}>+ </button>
-              </div>
-            </>
       )}
       {!!fileSelected && (
         <div>

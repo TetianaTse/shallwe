@@ -9,6 +9,7 @@
   width: 100%;
   object-fit: cover;
   box-sizing: border-box;
+  cursor: pointer;
 }
 .scale_block {
   display: flex;
