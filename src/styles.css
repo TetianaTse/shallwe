@@ -1,0 +1,18 @@
+.App {
+  font-family: sans-serif;
+  padding: 16px;
+}
+
+.Crop-Controls {
+  margin-bottom: 10px;
+}
+.Crop-Controls > * {
+  margin-bottom: 3px;
+}
+
+img {
+  max-width: 100%;
+}
+.ReactCrop__child-wrapper {
+  /* height: 230px; */
+}

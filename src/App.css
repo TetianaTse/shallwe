@@ -1,38 +1,127 @@
 .App {
-  text-align: center;
+  display: flex;
+  justify-content: space-around;
+  padding: 30px;
 }
-
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.crop {
+  width: 300px;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
+}
+.form {
+  width: 500px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.form > label {
+  display: block;
+  margin-bottom: 7px;
+  font-size: 18px;
+}
+.input_container {
+  position: relative;
+}
+
+.input_container > input {
+  display: block;
+  width: 100%;
+  padding: 10px 30px;
+  border-radius: 7px;
+  border: 1px solid rgb(143, 143, 143);
+  box-sizing: border-box;
+  font-size: 18px;
+}
+.input_container > input:focus-visible {
+  outline: none;
+}
+
+.block_smoking {
+  background-color: rgba(238, 237, 237, 0.522);
+  width: 100%;
+  padding: 10px 30px;
+  border-top: 3px solid rgb(36, 120, 135);
+  position: relative;
+  font-size: 18px;
+  box-sizing: border-box;
+  margin-top: -2px;
+}
+.radio {
+  margin-bottom: 10px;
+}
+.checkbox_block {
+  padding: 10px 30px;
+}
+.checkbox_block > label {
+  margin-right: 15px;
+}
+.radio-block {
+  width: 100%;
+}
+.radio-block__button {
+  margin: 0 auto;
+  width: 200px;
+}
+.radio-block__button > h3 {
+  margin-bottom: 10px;
+  font-size: 19px;
+  font-weight: 400;
+}
+input[type="radio"] {
+  margin-bottom: 12px;
+}
+.main_button {
+  width: 100%;
+  font-size: 22px;
+  text-transform: uppercase;
+  margin: 30px 0;
+  padding: 10px;
+  border: 1px solid rgb(36, 120, 135);
+  background-color: rgb(255, 255, 255);
+  border-radius: 7px;
+}
+.main_button:hover,
+.scale_button:hover {
+  cursor: pointer;
+  background-color: rgb(36, 120, 135);
   color: white;
 }
-
-.App-link {
-  color: #61dafb;
+.error-message {
+  color: rgb(175, 21, 21);
+  position: absolute;
+  left: 5px;
+  top: 5px;
+  font-size: 16px;
 }
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.error-message__checkbox {
+  color: rgb(175, 21, 21);
+  font-size: 16px;
+}
+.button_clear {
+  color: rgb(0, 0, 0);
+  position: absolute;
+  right: 5px;
+  top: 8px;
+  font-size: 16px;
+  background-color: white;
+  border: none;
+  cursor: pointer;
+}
+.upload-photo {
+  box-sizing: border-box;
+  width: 100%;
+  height: 256px;
+  background-color: rgba(238, 237, 237, 0.522);
+  margin: 30px 0;
+}
+.upload {
+  box-sizing: border-box;
+  object-fit: cover;
+  height: 200px;
+}
+.filepond--root .filepond--credits[style] {
+  opacity: 0;
+}
+.filepond--root .filepond--drop-label {
+  min-height: 16.75em !important;
 }
